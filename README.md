@@ -1,4 +1,5 @@
-SQL-Docker-fishnet-stats-collector
+fishdockSQL
+
 Real-time monitoring for Lichess Fishnet workers. Tracks Docker containers, hardware telemetry, and global chess activity.
 
 Features
