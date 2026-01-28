@@ -1,4 +1,8 @@
 fishdockSQL
+https://youtu.be/MhAD1MlX8pc
+
+[<img src="https://img.youtube.com/vi/MhAD1MlX8pc/hqdefault.jpg" width="600" height="300"
+/>](https://www.youtube.com/embed/MhAD1MlX8pc)
 
 Real-time monitoring for Lichess Fishnet workers. Tracks Docker containers, hardware telemetry, and global chess activity.
 
