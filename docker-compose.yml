@@ -1,0 +1,104 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=fish_admin
+      - POSTGRES_PASSWORD=PASSWORT
+      - POSTGRES_DB=fishnet_stats
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - fishnet_net
+
+  fishnet_logger:
+    build: .
+    container_name: fishnet_logger
+    restart: always
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DB_HOST=db
+      - DB_NAME=fishnet_stats
+      - DB_USER=fish_admin
+      - DB_PASS="PASSWORT"
+    depends_on:
+      - db
+    networks:
+      - fishnet_net
+
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SERVER_DOMAIN=eblink für cloudflare tunnel
+      - GF_SERVER_ROOT_URL=https://weblink für cloudflare tunnel
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_SERVER_COOKIE_SAMESITE=none
+      - GF_RENDERING_SERVER_URL=http://renderer:8081/render
+      - GF_RENDERING_CALLBACK_URL=https://weblink für cloudflare tunnel
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - fishnet_net
+
+  renderer:
+    image: grafana/grafana-image-renderer:latest
+    container_name: grafana_renderer
+    restart: always
+    ports:
+      - "8081" # Interner Port für Grafana
+    # 8081  Grafana 
+    networks:
+      - fishnet_net    
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: always
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      - fishnet_net        
+      
+
+  tunnel:
+    container_name: cloudflared-tunnel
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=tokenblabla
+    networks:
+      - fishnet_net
+
+volumes:
+  postgres_data:
+  grafana_data:
+
+
+networks:
+  fishnet_net:
+    driver: bridge
