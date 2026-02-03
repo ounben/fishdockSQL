@@ -1,4 +1,5 @@
-fishdockSQL
+fishdockSQL (PostgreSQL, Lichess Fishnet Chess Analyse, Grafana, Librehardwaremonitor)
+
 
 <img width="1890" height="4701" alt="FishDockSQL-1770151936548" src="https://github.com/user-attachments/assets/8a5195c8-0b56-41f1-a075-ad853f0f740e" />
 
@@ -26,10 +27,18 @@ Database: PostgreSQL (Tables metrics and worker_stats are created on startup).
 
 Config: Set DB credentials (Host, Name, User, Password) in the script header.
 
+
 Logic
 Main Loop: Scans Docker socket for fishnet- containers every 5s.
 
 Threading: Separate thread per container log-stream; one background worker for web stats.
+
+https://www.postgresql.org/
+https://github.com/lichess-org/fishnet
+https://grafana.com/
+https://www.docker.com/
+https://www.pgadmin.org/
+
 
 Output: SQL insert per batch + SI-compliant console logs.
 
