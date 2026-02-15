@@ -3,7 +3,7 @@ import re
 import threading
 import time
 import requests
-import psycopg2
+import psycopg
 import os
 import json
 import urllib.request  # Standard: Um Webseiten aufzurufen
@@ -25,7 +25,7 @@ LOG_PATTERN = re.compile(r"https://lichess\.org/(?P<id>[A-Za-z0-9_-]+).+finished
 def get_db_connection():
     while True:
         try:
-            conn = psycopg2.connect(host=DB_HOST, dbname=DB_NAME, user=DB_USER, password=DB_PASS, connect_timeout=5)
+            conn = psycopg.connect(host=DB_HOST, dbname=DB_NAME, user=DB_USER, password=DB_PASS, connect_timeout=5, autocommit=True)
             print("Datenbank verbunden!")
             return conn
         except Exception as e:
