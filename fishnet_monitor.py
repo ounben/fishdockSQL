@@ -184,6 +184,8 @@ def get_pbo_data():
 
         
 def stream_logs(container_name):
+    conn = get_db_connection() 
+    cur = conn.cursor()
     try:
         container = client.containers.get(container_name)
         env = container.attrs.get('Config', {}).get('Env', [])
@@ -328,6 +330,7 @@ def stream_logs(container_name):
                     conn.commit()
                 except Exception as db_err:
                     conn.rollback()
+                    return
                 
                 print(f"[{container_name}] ID:{batch_id} | {analysis_type} | {status} | {error_msg} | {variant} | {nps_si}nps | {cores}C | {current_version} | {pbo['temp']}C | {pbo['ppt']}W | {pbo['edc']}A | Chesscom: {cached_stats['chess_com_players']}u {cached_stats['chess_com_ping']:.3f}s | L-Stat:{cached_stats['players']}u/{cached_stats['games']}g {cached_stats['lichess_ping']:.3f}s | User(A/Q/O):{cached_stats['u_acq']}/{cached_stats['u_que']}/{cached_stats['u_old']}s | Sys(A/Q/O):{cached_stats['s_acq']}/{cached_stats['s_que']}/{cached_stats['s_old']}s")
                 
@@ -336,6 +339,8 @@ def stream_logs(container_name):
     except Exception as e:
         print(f"Fehler in stream_logs für {container_name}: {e}")
     finally:
+        cur.close()
+        conn.close()
         monitored_containers.discard(container_name)
 
 def main():
