@@ -1,0 +1,10 @@
+CREATE INDEX CONCURRENTLY idx_worker_stats_hourly ON worker_stats (
+  (floor(extract(epoch from "time"::timestamp) / 3600) * 3600),
+  container_name,
+  total_batches,
+  total_positions,
+  total_nodes
+);
+
+CREATE INDEX CONCURRENTLY idx_metrics_daily_hourly
+ON metrics ((floor(extract(epoch from "time"::timestamp) / 3600) * 3600), batch_id);
