@@ -7,4 +7,4 @@ CREATE INDEX CONCURRENTLY idx_worker_stats_hourly ON worker_stats (
 );
 
 CREATE INDEX CONCURRENTLY idx_metrics_daily_hourly
-ON metrics ((floor(extract(epoch from "time"::timestamp) / 3600) * 3600), batch_id);
+ON metrics ((floor(extract(epoch from ("time" AT TIME ZONE 'UTC')) / 3600) * 3600), batch_id);
