@@ -1,0 +1,1 @@
+ docker run --rm -v "C:\LichessDB:/data" alpine sh -c "apk add zstd && zstdcat /data/lichess_db_standard_rated_2026-03.pgn.zst | awk '/^\[Event / {if (h) e++; t++; h=0} /\[%eval/ {h=1} END {print t; print e}'" | Tee-Object -FilePath "C:\LichessDB\ergebnis.txt"
